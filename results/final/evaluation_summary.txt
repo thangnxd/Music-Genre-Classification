@@ -1,8 +1,8 @@
 
 FINAL EVALUATION SUMMARY
 
-Best model: KNN
-Best accuracy: 0.9139
+Best model: CNN2D_BiLSTM
+Best accuracy: 0.8011
 
 CNN2D_BiLSTM metrics:
 - Accuracy: 0.8011

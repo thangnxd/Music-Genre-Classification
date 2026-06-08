@@ -1,6 +1,6 @@
 Model,Accuracy,Source
-KNN,0.9139,Task B
-SVM,0.9066,Task B
-XGBoost,0.8986,Task B
-Random Forest,0.8632,Task B
 CNN2D_BiLSTM,0.8010680907877169,Task C
+XGBoost,0.7316,Task B
+Random Forest,0.7076,Task B
+SVM,0.6963,Task B
+KNN,0.6509,Task B

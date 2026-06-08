@@ -71,8 +71,7 @@ KNN_MODEL_PATH = os.path.join(MODEL_DIR, "ds1_knn.pkl")
 KNN_SCALER_PATH = os.path.join(MODEL_DIR, "ds1_scaler.pkl")
 KNN_LABEL_ENCODER_PATH = os.path.join(MODEL_DIR, "ds1_label_encoder.pkl")
 
-# SVM có thể được lưu với các tên khác nhau tùy notebook train.
-# Dashboard sẽ tự tìm file tồn tại đầu tiên trong danh sách này.
+
 SVM_MODEL_CANDIDATES = [
     os.path.join(MODEL_DIR, "ds1_svm.pkl"),
     os.path.join(MODEL_DIR, "svm.pkl"),
@@ -413,9 +412,6 @@ def extract_features_for_knn(audio_path, feature_names, sr=22050, segment_second
     """
     Cắt audio thành các segment 3s rồi extract feature cho từng segment.
 
-    Bản cũ dùng max_segments=10, tức là chỉ lấy 10 đoạn x 3s = 30 giây đầu.
-    Bản này mặc định max_segments=None để lấy toàn bộ bài hát:
-    60s -> 20 segment, 180s -> 60 segment.
     """
     y, sr = librosa.load(audio_path, sr=sr, mono=True)
     segment_length = int(segment_seconds * sr)
@@ -451,9 +447,7 @@ def extract_features_for_knn(audio_path, feature_names, sr=22050, segment_second
 def predict_average_probabilities(model, X_scaled, label_encoder):
     """
     Trả về xác suất trung bình trên các segment.
-    - Nếu model có predict_proba: dùng trực tiếp.
-    - Nếu SVM không bật probability=True: dùng decision_function và softmax.
-    - Nếu không có cả hai: dùng vote theo nhãn predict.
+
     """
     if hasattr(model, "predict_proba"):
         segment_probs = model.predict_proba(X_scaled)
@@ -523,19 +517,42 @@ with tabs[0]:
     st.subheader("Cấu trúc project")
     st.code("""
 Music-Genre-Classification/
-├── app/
-│   └── dashboard.py
-├── models/
-│   ├── ds1_knn.pkl
-│   ├── ds1_scaler.pkl
-│   ├── ds1_label_encoder.pkl
-│   └── cnn_lstm_best.pt
-├── results/
-│   ├── task_b/
-│   ├── task_c/
-│   └── final/
-└── notebooks/
-    └── task-d.ipynb
+|
+|-- app/
+|   |-- dashboard.py          : Dashboard  cho GTZAN
+|
+|-- models/
+|   |-- ds1_knn.pkl
+|   |-- ds1_svm.pkl
+|   |-- ds1_random_forest.pkl
+|   |-- ds1_xgboost.pkl
+|   |-- ds1_stacking.pkl
+|   |-- ds1_scaler.pkl
+|   |-- ds1_label_encoder.pkl
+|   |-- cnn_lstm_best.pt
+|
+|-- results/
+|   |-- task_b/
+|   |   |-- final_summary.csv
+|   |   |-- comparison_all.png
+|   |   |-- confusion_matrices.png
+|   |
+|   |-- task_c/
+|   |   |-- dl_metrics.csv
+|   |   |-- dl_predictions.pkl
+|   |   |-- learning_curve.png
+|   |
+|   |-- final/
+|   |   |-- model_comparison.csv
+|   |   |-- cnn_lstm_confusion_matrix.png
+|   |   |-- cnn_lstm_classification_report.csv
+|   |   |-- genre_error_analysis.csv
+|   |
+|
+|-- notebooks/
+|   |-- task-d.ipynb
+|
+|-- requirements.txt
     """)
 
 
@@ -641,9 +658,8 @@ with tabs[3]:
 
 
 with tabs[4]:
-    st.header("Demo chính - Dự đoán bằng KNN")
-    st.write("Mô hình KNN được chọn làm demo chính vì đạt accuracy cao nhất trên DS1 GTZAN.")
-    st.info("Demo hiện cắt toàn bộ bài nhạc thành các đoạn 3 giây, rồi lấy trung bình xác suất trên tất cả các đoạn. Bản cũ chỉ lấy tối đa 10 đoạn đầu, tương đương 30 giây đầu.")
+    st.header("Demo - Dự đoán bằng KNN")
+
 
     uploaded_file = st.file_uploader(
         "Tải lên file nhạc để dự đoán bằng KNN",
@@ -716,9 +732,8 @@ with tabs[4]:
 
 
 with tabs[5]:
-    st.header("Demo thêm - Dự đoán bằng SVM")
+    st.header("Demo - Dự đoán bằng SVM")
     st.write(
-        "SVM dùng cùng bộ đặc trưng GTZAN 3 giây như KNN. "
         "Dashboard sẽ cắt toàn bộ bài nhạc thành các đoạn 3 giây, dự đoán từng đoạn, rồi lấy trung bình xác suất/điểm tin cậy."
     )
 
@@ -802,11 +817,7 @@ render_traditional_ml_demo(
     model_name="Random Forest",
     load_assets_func=load_rf_assets,
     upload_key="rf_upload",
-    button_key="rf_predict",
-    description=(
-        "Random Forest dùng cùng bộ đặc trưng GTZAN 3 giây như KNN/SVM. "
-        "Model này thường ổn định và dễ giải thích hơn các mô hình phức tạp."
-    )
+    button_key="rf_predict"
 )
 
 
@@ -816,10 +827,6 @@ render_traditional_ml_demo(
     load_assets_func=load_xgboost_assets,
     upload_key="xgb_upload",
     button_key="xgb_predict",
-    description=(
-        "XGBoost dùng cùng bộ đặc trưng GTZAN 3 giây như các model ML truyền thống khác. "
-        "Đây là model boosting mạnh, thường cho kết quả tốt trên dữ liệu đặc trưng dạng bảng."
-    ),
     extra_warning=(
         "Nếu gặp lỗi `No module named xgboost`, hãy cài thêm `xgboost` vào môi trường hoặc requirements.txt."
     )
