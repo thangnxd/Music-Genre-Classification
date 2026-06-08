@@ -817,7 +817,11 @@ render_traditional_ml_demo(
     model_name="Random Forest",
     load_assets_func=load_rf_assets,
     upload_key="rf_upload",
-    button_key="rf_predict"
+    button_key="rf_predict",
+    description=(
+        "Random Forest dự đoán thể loại nhạc dựa trên nhiều cây quyết định. "
+        "Mô hình này dùng cùng bộ đặc trưng 3 giây như các mô hình ML khác."
+    )
 )
 
 
@@ -827,8 +831,12 @@ render_traditional_ml_demo(
     load_assets_func=load_xgboost_assets,
     upload_key="xgb_upload",
     button_key="xgb_predict",
+    description=(
+        "XGBoost dự đoán thể loại nhạc bằng cách kết hợp nhiều cây quyết định theo cơ chế boosting. "
+        "Mô hình này cũng sử dụng đặc trưng âm thanh trích xuất từ các đoạn 3 giây."
+    ),
     extra_warning=(
-        "Nếu gặp lỗi `No module named xgboost`, hãy cài thêm `xgboost` vào môi trường hoặc requirements.txt."
+        "Nếu gặp lỗi `No module named xgboost`, hãy cài thêm `xgboost` vào môi trường hoặc thêm vào requirements.txt."
     )
 )
 
