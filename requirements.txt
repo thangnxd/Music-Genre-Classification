@@ -8,3 +8,7 @@ seaborn
 Pillow
 streamlit
 torch
+scipy
+xgboost
+librosa
+plotly
